@@ -13,21 +13,17 @@
     }
 
     body {
-      background: #0f0a1c url('https://img.lightshot.app/9AqCovSGQ6CocP0d21PuzQ.png') no-repeat center top fixed;
-      background-size: cover;
+      background: #0f0a1c;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 55vh;
-      padding-bottom: 40px;
-      padding-left: 20px;
-      padding-right: 20px;
+      justify-content: center;
+      padding: 20px;
     }
 
     .calc-container {
-      background: rgba(18, 13, 33, 0.94);
+      background: rgba(18, 13, 33, 0.96);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(168, 85, 247, 0.35);
@@ -40,7 +36,7 @@
     }
 
     .calc-container h2 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       text-align: center;
       margin-bottom: 20px;
       color: #e0aaff;
@@ -61,7 +57,7 @@
         grid-template-columns: 1fr;
       }
       body {
-        padding-top: 45vh;
+        padding: 15px;
       }
     }
 
@@ -105,63 +101,47 @@
       box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
     }
 
-    /* Linha do Catch Boost e Pokelog perfeitamente nivelados */
     .boost-row {
-      display: flex !important;
-      gap: 12px !important;
-      align-items: stretch !important;
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
 
     .boost-row select {
-      flex: 1 !important;
-      height: 42px !important;
-      box-sizing: border-box !important;
+      flex: 1;
+      height: 42px;
     }
 
-    /* Container do Checkbox nivelado na mesma altura e posicao */
     .checkbox-container {
-      flex: 1 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      gap: 8px !important;
-      padding: 0 12px !important;
-      background: rgba(10, 7, 20, 0.9) !important;
-      border: 1px solid #5b21b6 !important;
-      border-radius: 6px !important;
-      height: 42px !important;
-      box-sizing: border-box !important;
-      cursor: pointer !important;
-      user-select: none !important;
-      margin: 0 !important;
-      transition: border-color 0.2s ease !important;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      background: rgba(10, 7, 20, 0.9);
+      border: 1px solid #5b21b6;
+      border-radius: 6px;
+      height: 42px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s ease;
     }
 
     .checkbox-container:hover {
-      border-color: #a855f7 !important;
+      border-color: #a855f7;
     }
 
-    /* Reset do checkbox */
     .checkbox-container input[type="checkbox"] {
-      -webkit-appearance: checkbox !important;
-      appearance: checkbox !important;
-      width: 16px !important;
-      height: 16px !important;
-      min-width: 16px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      accent-color: #a855f7 !important;
-      cursor: pointer !important;
+      width: 16px;
+      height: 16px;
+      accent-color: #a855f7;
+      cursor: pointer;
     }
 
-    /* Texto do Pokelog */
     .checkbox-container span {
-      font-size: 0.85rem !important;
-      color: #c4b5fd !important;
-      white-space: nowrap !important;
-      line-height: 1 !important;
-      display: flex !important;
-      align-items: center !important;
+      font-size: 0.85rem;
+      color: #c4b5fd;
+      white-space: nowrap;
     }
 
     .resultado {
@@ -171,12 +151,13 @@
       border: 1px dashed rgba(168, 85, 247, 0.3);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .res-item {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 0.9rem;
     }
 
@@ -185,18 +166,18 @@
     }
 
     .res-item strong {
-      color: #a7f3d0;
-      font-weight: 600;
+      color: #34d399;
+      font-weight: 700;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
 
   <div class="calc-container">
-    <h2>Calculadora de Pity</h2>
+    <h2>Calculadora de Pity - IdlePoke</h2>
     
     <div class="calc-grid">
-      <!-- Coluna da Esquerda: Formulario -->
       <div class="inputs-col">
         <div class="input-group">
           <label for="buscar-pokemon">Buscar Pokémon:</label>
@@ -238,7 +219,6 @@
         </div>
       </div>
 
-      <!-- Coluna da Direita: Resultados -->
       <div class="resultado" id="resultado">
         <div class="res-item">
           <span>Chance por Bola (c/ Buff):</span>
