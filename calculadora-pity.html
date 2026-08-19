@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Pity - IdlePoke</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0f0a1c url('https://img.lightshot.app/9AqCovSGQ6CocP0d21PuzQ.png') no-repeat center top fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 55vh;
+      padding-bottom: 40px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .calc-container {
+      background: rgba(18, 13, 33, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(147, 51, 234, 0.25);
+      border-radius: 14px;
+      padding: 25px 30px;
+      width: 100%;
+      max-width: 900px;
+      color: #fff;
+    }
+
+    .calc-container h2 {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e0aaff;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding-top: 45vh;
+      }
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    .input-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: #c4b5fd;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="number"], 
+    .input-group select {
+      width: 100%;
+      height: 42px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid #5b21b6;
+      background: rgba(10, 7, 20, 0.9);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-group select option {
+      background: #0a0714;
+      color: #fff;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    }
+
+    /* Linha do Catch Boost e Pokelog perfeitamente nivelados */
+    .boost-row {
+      display: flex !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+
+    .boost-row select {
+      flex: 1 !important;
+      height: 42px !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Container do Checkbox nivelado na mesma altura e posicao */
+    .checkbox-container {
+      flex: 1 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 8px !important;
+      padding: 0 12px !important;
+      background: rgba(10, 7, 20, 0.9) !important;
+      border: 1px solid #5b21b6 !important;
+      border-radius: 6px !important;
+      height: 42px !important;
+      box-sizing: border-box !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      margin: 0 !important;
+      transition: border-color 0.2s ease !important;
+    }
+
+    .checkbox-container:hover {
+      border-color: #a855f7 !important;
+    }
+
+    /* Reset do checkbox */
+    .checkbox-container input[type="checkbox"] {
+      -webkit-appearance: checkbox !important;
+      appearance: checkbox !important;
+      width: 16px !important;
+      height: 16px !important;
+      min-width: 16px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      accent-color: #a855f7 !important;
+      cursor: pointer !important;
+    }
+
+    /* Texto do Pokelog */
+    .checkbox-container span {
+      font-size: 0.85rem !important;
+      color: #c4b5fd !important;
+      white-space: nowrap !important;
+      line-height: 1 !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+
+    .resultado {
+      background: rgba(10, 7, 20, 0.6);
+      padding: 18px 20px;
+      border-radius: 10px;
+      border: 1px dashed rgba(168, 85, 247, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .res-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .res-item span {
+      color: #c4b5fd;
+    }
+
+    .res-item strong {
+      color: #a7f3d0;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calc-container">
+    <h2>Calculadora de Pity</h2>
+    
+    <div class="calc-grid">
+      <!-- Coluna da Esquerda: Formulario -->
+      <div class="inputs-col">
+        <div class="input-group">
+          <label for="buscar-pokemon">Buscar Pokémon:</label>
+          <input type="text" list="pokedex-list" id="buscar-pokemon" placeholder="Digite o nome do Pokémon..." oninput="selecionarPokemon()">
+          <datalist id="pokedex-list"></datalist>
+        </div>
+
+        <div class="input-group">
+          <label for="pokemon">Preço de Venda / Mark ($):</label>
+          <input type="number" id="pokemon" value="1050" placeholder="Ex: 1050" oninput="calcular()">
+        </div>
+
+        <div class="input-group">
+          <label for="bola">Tipo de Pokébola:</label>
+          <select id="bola" onchange="calcular()">
+            <option value="5" data-cap="15">Poké Ball ($ 5)</option>
+            <option value="20" data-cap="20">Great Ball ($ 20)</option>
+            <option value="50" data-cap="25">Super Ball ($ 50)</option>
+            <option value="130" data-cap="30" selected>Ultra Ball ($ 130)</option>
+            <option value="130" data-cap="25">Premier Ball ($ 130)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="buff">Catch Boost:</label>
+          <div class="boost-row">
+            <select id="buff" onchange="calcular()">
+              <option value="1">Nenhum (1.0x)</option>
+              <option value="1.5">Boost 1.5x</option>
+              <option value="2" selected>Boost 2.0x</option>
+              <option value="3">Boost 3.0x</option>
+            </select>
+
+            <label class="checkbox-container">
+              <input type="checkbox" id="pokelog" onchange="calcular()">
+              <span>Pokelog Tier 3 (+5%)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna da Direita: Resultados -->
+      <div class="resultado" id="resultado">
+        <div class="res-item">
+          <span>Chance por Bola (c/ Buff):</span>
+          <strong id="res-chance">0,00%</strong>
+        </div>
+        <div class="res-item">
+          <span>Meta de Gasto (Pity):</span>
+          <strong id="res-meta">$ 0</strong>
+        </div>
+        <div class="res-item">
+          <span>Bolas para Ativar Pity:</span>
+          <strong id="res-bolas">0 un</strong>
+        </div>
+        <div class="res-item">
+          <span>Custo para Ativar Pity:</span>
+          <strong id="res-custo">$ 0</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const databasePokedex = [{"nome":"Abra","mark":1050},{"nome":"Aerodactyl","mark":0},{"nome":"Aipom","mark":5600},{"nome":"Alakazam","mark":11060},{"nome":"Ambipom","mark":70000},{"nome":"Ampharos","mark":12600},{"nome":"Ancient Alakazam","mark":11060},{"nome":"Ancient Dragonite","mark":87500},{"nome":"Ancient Kingdra","mark":42000},{"nome":"Ancient Meganium","mark":12600},{"nome":"Arbok","mark":2100},{"nome":"Arcanine","mark":40950},{"nome":"Ariados","mark":2100},{"nome":"Articuno","mark":0},{"nome":"Aviator Pidgeot","mark":8049},{"nome":"Banshee Misdreavus","mark":140000},{"nome":"Bayleef","mark":5600},{"nome":"Beedrill","mark":1400},{"nome":"Bellossom","mark":8400},{"nome":"Bellsprout","mark":56},{"nome":"Blastoise","mark":12600},{"nome":"Bone Marowak","mark":7699},{"nome":"Boxer Hitmonchan","mark":45850},{"nome":"Brave Blastoise","mark":12600},{"nome":"Brave Charizard","mark":12600},{"nome":"Brave Nidoking","mark":8575},{"nome":"Brave Nidoqueen","mark":8575},{"nome":"Brave Noctowl","mark":7000},{"nome":"Brave Venusaur","mark":12600},{"nome":"Bronzong","mark":17500},{"nome":"Bronzor","mark":10500},{"nome":"Brute Rhydon","mark":9100},{"nome":"Brute Ursaring","mark":105000},{"nome":"Bulbasaur","mark":2100},{"nome":"Butterfree","mark":1400},{"nome":"Capoeira Hitmontop","mark":45850},{"nome":"Caterpie","mark":210},{"nome":"Chansey","mark":28000},{"nome":"Charged Raichu","mark":12600},{"nome":"Charizard","mark":12600},{"nome":"Charmander","mark":2100},{"nome":"Charmeleon","mark":5600},{"nome":"Chikorita","mark":2100},{"nome":"Clefable","mark":12600},{"nome":"Clefairy","mark":5600},{"nome":"Cleffa","mark":2100},{"nome":"Cloyster","mark":7140},{"nome":"Crobat","mark":40600},{"nome":"Croconaw","mark":5600},{"nome":"Cubone","mark":700},{"nome":"Cyndaquil","mark":2100},{"nome":"Dark Crobat","mark":40600},{"nome":"Delibird","mark":7000},{"nome":"Dewgong","mark":8400},{"nome":"Diglett","mark":140},{"nome":"Ditto","mark":0},{"nome":"Dodrio","mark":7000},{"nome":"Doduo","mark":420},{"nome":"Dragon Machamp","mark":11900},{"nome":"Dragonair","mark":45500},{"nome":"Dragonite","mark":87500},{"nome":"Dratini","mark":10500},{"nome":"Drowzee","mark":700},{"nome":"Dugtrio","mark":2100},{"nome":"Eevee","mark":31499},{"nome":"Ekans","mark":210},{"nome":"Elder Arcanine","mark":40950},{"nome":"Elder Blastoise","mark":12600},{"nome":"Elder Charizard","mark":12600},{"nome":"Elder Electabuzz","mark":84000},{"nome":"Elder Jynx","mark":84000},{"nome":"Elder Marowak","mark":7699},{"nome":"Elder Muk","mark":7699},{"nome":"Elder Pidgeot","mark":8049},{"nome":"Elder Pinsir","mark":28000},{"nome":"Elder Raichu","mark":12600},{"nome":"Elder Tangela","mark":7000},{"nome":"Elder Tentacruel","mark":7000},{"nome":"Elder Tyranitar","mark":87500},{"nome":"Electabuzz","mark":84000},{"nome":"Electrode","mark":2100},{"nome":"Elekid","mark":14000},{"nome":"Elite Farfetch'd","mark":129499},{"nome":"Elite Hitmonchan","mark":70},{"nome":"Elite Hitmonlee","mark":143500},{"nome":"Elite Hitmontop","mark":143500},{"nome":"Elite Tyrogue","mark":143500},{"nome":"Enigmatic Girafarig","mark":84000},{"nome":"Enraged Typhlosion","mark":12600},{"nome":"Evil Cloyster","mark":7140},{"nome":"Exeggcute","mark":140},{"nome":"Exeggutor","mark":7000},{"nome":"Farfetch’d","mark":5600},{"nome":"Fearow","mark":3570},{"nome":"Feraligatr","mark":12600},{"nome":"Flaaffy","mark":5600},{"nome":"Freezing Dewgong","mark":8400},{"nome":"Furious Ampharos","mark":12600},{"nome":"Furious Mantine","mark":84000},{"nome":"Furious Sandslash","mark":7699},{"nome":"Furious Scyther","mark":84000},{"nome":"Furret","mark":2100},{"nome":"Gastly","mark":2100},{"nome":"Gengar","mark":19600},{"nome":"Geodude","mark":210},{"nome":"Glalie","mark":9450},{"nome":"Gloom","mark":1575},{"nome":"Golbat","mark":2100},{"nome":"Goldeen","mark":140},{"nome":"Golduck","mark":8049},{"nome":"Golem","mark":10500},{"nome":"Graveler","mark":3500},{"nome":"Grimer","mark":210},{"nome":"Growlithe","mark":2450},{"nome":"Gyarados","mark":38500},{"nome":"Hard Golem","mark":10500},{"nome":"Haunter","mark":5600},{"nome":"Heavy Piloswine","mark":7699},{"nome":"Heracross","mark":84000},{"nome":"Hitmonchan","mark":45850},{"nome":"Hitmonlee","mark":45850},{"nome":"Hitmontop","mark":45850},{"nome":"Hoothoot","mark":35},{"nome":"Hoppip","mark":56},{"nome":"Horsea","mark":140},{"nome":"Hypno","mark":7699},{"nome":"Igglybuff","mark":2100},{"nome":"Iron Steelix","mark":77000},{"nome":"Ivysaur","mark":5600},{"nome":"Jigglypuff","mark":5600},{"nome":"Jumpluff","mark":8400},{"nome":"Jynx","mark":84000},{"nome":"Kadabra","mark":4059},{"nome":"Kakuna","mark":175},{"nome":"Kangaskhan","mark":84000},{"nome":"Kingdra","mark":42000},{"nome":"Kingler","mark":7000},{"nome":"Koffing","mark":210},{"nome":"Krabby","mark":140},{"nome":"Lapras","mark":84000},{"nome":"Larvitar","mark":10500},{"nome":"Lava Magmar","mark":84000},{"nome":"Ledyba","mark":175},{"nome":"Lickitung","mark":42000},{"nome":"Machamp","mark":11900},{"nome":"Machoke","mark":4900},{"nome":"Machop","mark":1400},{"nome":"Magby","mark":14000},{"nome":"Magcargo","mark":7699},{"nome":"Magmar","mark":84000},{"nome":"Magnemite","mark":280},{"nome":"Magnet Electabuzz","mark":84000},{"nome":"Magneton","mark":7279},{"nome":"Mankey","mark":210},{"nome":"Mantine","mark":84000},{"nome":"Mareep","mark":2100},{"nome":"Marowak","mark":7699},{"nome":"Master Alakazam","mark":11060},{"nome":"Meganium","mark":12600},{"nome":"Meowth","mark":2100},{"nome":"Metal Scizor","mark":154000},{"nome":"Metal Skarmory","mark":84000},{"nome":"Metapod","mark":175},{"nome":"Minun","mark":14000},{"nome":"Misdreavus","mark":140000},{"nome":"Moon Clefable","mark":12600},{"nome":"Mr. Mime","mark":28000},{"nome":"Muk","mark":7699},{"nome":"Munchlax","mark":56000},{"nome":"Murkrow","mark":7000},{"nome":"Natu","mark":2100},{"nome":"Nidoking","mark":8575},{"nome":"Nidoqueen","mark":8575},{"nome":"Nidoranfe","mark":87},{"nome":"Nidoranma","mark":87},{"nome":"Nidorina","mark":1575},{"nome":"Nidorino","mark":1575},{"nome":"Ninetales","mark":7699},{"nome":"Noctowl","mark":7000},{"nome":"Octopus Octillery","mark":0},{"nome":"Oddish","mark":56},{"nome":"Onix","mark":7000},{"nome":"Paras","mark":420},{"nome":"Parasect","mark":3542},{"nome":"Pelipper","mark":70000},{"nome":"Persian","mark":2100},{"nome":"Pichu","mark":2100},{"nome":"Pidgeot","mark":8049},{"nome":"Pidgeotto","mark":1050},{"nome":"Pidgey","mark":42},{"nome":"Pikachu","mark":5600},{"nome":"Piloswine","mark":7699},{"nome":"Pineco","mark":210},{"nome":"Pinsir","mark":28000},{"nome":"Plusle","mark":14000},{"nome":"Politoed","mark":9100},{"nome":"Poliwag","mark":56},{"nome":"Poliwhirl","mark":2100},{"nome":"Poliwrath","mark":9100},{"nome":"Ponyta","mark":1050},{"nome":"Porygon","mark":42000},{"nome":"Primeape","mark":3709},{"nome":"Psy Jynx","mark":84000},{"nome":"Psyduck","mark":1050},{"nome":"Pupitar","mark":45500},{"nome":"Quagsire","mark":8400},{"nome":"Quilava","mark":5600},{"nome":"Raichu","mark":12600},{"nome":"Rapidash","mark":8049},{"nome":"Raticate","mark":1400},{"nome":"Rattata","mark":350},{"nome":"Rhydon","mark":9100},{"nome":"Rhyhorn","mark":2100},{"nome":"Roll Donphan","mark":9100},{"nome":"Sableye","mark":15399},{"nome":"Sandshrew","mark":700},{"nome":"Sandslash","mark":7699},{"nome":"Scyther","mark":84000},{"nome":"Seadra","mark":3849},{"nome":"Seaking","mark":2100},{"nome":"Sealeo","mark":7699},{"nome":"Seel","mark":1400},{"nome":"Sentret","mark":210},{"nome":"Shellder","mark":140},{"nome":"Shiny Abra","mark":1120},{"nome":"Shiny Aipom","mark":11200},{"nome":"Shiny Alakazam","mark":22120},{"nome":"Shiny Ambipom","mark":140000},{"nome":"Shiny Ampharos","mark":25200},{"nome":"Shiny Arbok","mark":4200},{"nome":"Shiny Arcanine","mark":81900},{"nome":"Shiny Ariados","mark":4200},{"nome":"Shiny Articuno","mark":0},{"nome":"Shiny Bayleef","mark":11200},{"nome":"Shiny Beedrill","mark":2800},{"nome":"Shiny Bellossom","mark":16800},{"nome":"Shiny Bellsprout","mark":112},{"nome":"Shiny Blastoise","mark":25200},{"nome":"Shiny Bronzong","mark":35000},{"nome":"Shiny Bulbasaur","mark":4200},{"nome":"Shiny Butterfree","mark":2800},{"nome":"Shiny Caterpie","mark":7},{"nome":"Shiny Charizard","mark":25200},{"nome":"Shiny Charmander","mark":4200},{"nome":"Shiny Charmeleon","mark":11200},{"nome":"Shiny Chikorita","mark":4200},{"nome":"Shiny Clefable","mark":25200},{"nome":"Shiny Clefairy","mark":11200},{"nome":"Shiny Cleffa","mark":4200},{"nome":"Shiny Cloyster","mark":14280},{"nome":"Shiny Crobat","mark":81200},{"nome":"Shiny Croconaw","mark":11200},{"nome":"Shiny Cubone","mark":1400},{"nome":"Shiny Cyndaquil","mark":4200},{"nome":"Shiny Delibird","mark":14000},{"nome":"Shiny Dewgong","mark":16800},{"nome":"Shiny Diglett","mark":280},{"nome":"Shiny Ditto","mark":70},{"nome":"Shiny Dodrio","mark":14000},{"nome":"Shiny Doduo","mark":840},{"nome":"Shiny Dragonair","mark":91000},{"nome":"Shiny Dragonite","mark":175000},{"nome":"Shiny Dratini","mark":21000},{"nome":"Shiny Drowzee","mark":1400},{"nome":"Shiny Dugtrio","mark":4200},{"nome":"Shiny Eevee","mark":62999},{"nome":"Shiny Ekans","mark":420},{"nome":"Shiny Electabuzz","mark":168000},{"nome":"Shiny Electrode","mark":4200},{"nome":"Shiny Elekid","mark":28000},{"nome":"Shiny Exeggcute","mark":280},{"nome":"Shiny Exeggutor","mark":14000},{"nome":"Shiny Fearow","mark":7140},{"nome":"Shiny Feraligatr","mark":25200},{"nome":"Shiny Flaaffy","mark":11200},{"nome":"Shiny Froslass","mark":84000},{"nome":"Shiny Furret","mark":4200},{"nome":"Shiny Gastly","mark":4200},{"nome":"Shiny Gengar","mark":25200},{"nome":"Shiny Geodude","mark":420},{"nome":"Shiny Gloom","mark":3150},{"nome":"Shiny Golbat","mark":4200},{"nome":"Shiny Goldeen","mark":280},{"nome":"Shiny Golduck","mark":16099},{"nome":"Shiny Golem","mark":21000},{"nome":"Shiny Graveler","mark":7000},{"nome":"Shiny Grimer","mark":420},{"nome":"Shiny Growlithe","mark":4900},{"nome":"Shiny Gyarados","mark":77000},{"nome":"Shiny Haunter","mark":11200},{"nome":"Shiny Heracross","mark":168000},{"nome":"Shiny Hoothoot","mark":70},{"nome":"Shiny Hoppip","mark":112},{"nome":"Shiny Horsea","mark":280},{"nome":"Shiny Hypno","mark":15399},{"nome":"Shiny Igglybuff","mark":4200},{"nome":"Shiny Ivysaur","mark":11200},{"nome":"Shiny Jigglypuff","mark":11200},{"nome":"Shiny Jumpluff","mark":16800},{"nome":"Shiny Jynx","mark":168000},{"nome":"Shiny Kadabra","mark":8119},{"nome":"Shiny Kakuna","mark":350},{"nome":"Shiny Kingdra","mark":84000},{"nome":"Shiny Kingler","mark":14000},{"nome":"Shiny Koffing","mark":420},{"nome":"Shiny Krabby","mark":280},{"nome":"Shiny Lapras","mark":168000},{"nome":"Shiny Larvitar","mark":21000},{"nome":"Shiny Lava Magmar","mark":168000},{"nome":"Shiny Ledyba","mark":350},{"nome":"Shiny Machamp","mark":23800},{"nome":"Shiny Machoke","mark":9800},{"nome":"Shiny Machop","mark":2800},{"nome":"Shiny Magby","mark":28000},{"nome":"Shiny Magcargo","mark":15399},{"nome":"Shiny Magmar","mark":168000},{"nome":"Shiny Magnemite","mark":560},{"nome":"Shiny Magneton","mark":14559},{"nome":"Shiny Mankey","mark":420},{"nome":"Shiny Mantine","mark":168000},{"nome":"Shiny Mareep","mark":4200},{"nome":"Shiny Marowak","mark":15399},{"nome":"Shiny Meganium","mark":25200},{"nome":"Shiny Meowth","mark":420},{"nome":"Shiny Metapod","mark":350},{"nome":"Shiny Minun","mark":28000},{"nome":"Shiny Misdreavus","mark":280000},{"nome":"Shiny Muk","mark":15399},{"nome":"Shiny Munchlax","mark":112000},{"nome":"Shiny Murkrow","mark":14000},{"nome":"Shiny Natu","mark":4200},{"nome":"Shiny Nidoking","mark":17150},{"nome":"Shiny Nidoqueen","mark":17150},{"nome":"Shiny Nidoranfe","mark":175},{"nome":"Shiny Nidoranma","mark":175},{"nome":"Shiny Nidorina","mark":3150},{"nome":"Shiny Nidorino","mark":3150},{"nome":"Shiny Ninetales","mark":15399},{"nome":"Shiny Noctowl","mark":14000},{"nome":"Shiny Oddish","mark":112},{"nome":"Shiny Onix","mark":14000},{"nome":"Shiny Paras","mark":84},{"nome":"Shiny Parasect","mark":7084},{"nome":"Shiny Pelipper","mark":140000},{"nome":"Shiny Persian","mark":4200},{"nome":"Shiny Pichu","mark":4200},{"nome":"Shiny Pidgeot","mark":16099},{"nome":"Shiny Pidgeotto","mark":2100},{"nome":"Shiny Pidgey","mark":84},{"nome":"Shiny Pikachu","mark":11200},{"nome":"Shiny Piloswine","mark":15399},{"nome":"Shiny Pineco","mark":420},{"nome":"Shiny Pinsir","mark":56000},{"nome":"Shiny Plusle","mark":28000},{"nome":"Shiny Politoed","mark":18200},{"nome":"Shiny Poliwag","mark":112},{"nome":"Shiny Poliwhirl","mark":4200},{"nome":"Shiny Ponyta","mark":2100},{"nome":"Shiny Porygon","mark":84000},{"nome":"Shiny Primeape","mark":7419},{"nome":"Shiny Psyduck","mark":2100},{"nome":"Shiny Pupitar","mark":91000},{"nome":"Shiny Quagsire","mark":16800},{"nome":"Shiny Quilava","mark":11200},{"nome":"Shiny Raichu","mark":25200},{"nome":"Shiny Rapidash","mark":16099},{"nome":"Shiny Raticate","mark":2800},{"nome":"Shiny Rattata","mark":7},{"nome":"Shiny Rhydon","mark":18200},{"nome":"Shiny Rhyhorn","mark":4200},{"nome":"Shiny Sableye","mark":30799},{"nome":"Shiny Sandshrew","mark":1400},{"nome":"Shiny Sandslash","mark":15399},{"nome":"Shiny Scyther","mark":168000},{"nome":"Shiny Seadra","mark":7699},{"nome":"Shiny Seaking","mark":4200},{"nome":"Shiny Seel","mark":2800},{"nome":"Shiny Sentret","mark":7},{"nome":"Shiny Shellder","mark":280},{"nome":"Shiny Skiploom","mark":3150},{"nome":"Shiny Slowbro","mark":14000},{"nome":"Shiny Slowking","mark":154000},{"nome":"Shiny Slowpoke","mark":560},{"nome":"Shiny Slugma","mark":1400},{"nome":"Shiny Smoochum","mark":28000},{"nome":"Shiny Sneasel","mark":14000},{"nome":"Shiny Snorlax","mark":280000},{"nome":"Shiny Spearow","mark":140},{"nome":"Shiny Spinarak","mark":350},{"nome":"Shiny Squirtle","mark":4200},{"nome":"Shiny Starmie","mark":14000},{"nome":"Shiny Staryu","mark":560},{"nome":"Shiny Steelix","mark":154000},{"nome":"Shiny Sunflora","mark":7000},{"nome":"Shiny Sunkern","mark":7},{"nome":"Shiny Swinub","mark":1400},{"nome":"Shiny Tangela","mark":14000},{"nome":"Shiny Tauros","mark":14000},{"nome":"Shiny Teddiursa","mark":112000},{"nome":"Shiny Tentacool","mark":420},{"nome":"Shiny Tentacruel","mark":14000},{"nome":"Shiny Togekiss","mark":175000},{"nome":"Shiny Togepi","mark":21000},{"nome":"Shiny Togetic","mark":35000},{"nome":"Shiny Totodile","mark":4200},{"nome":"Shiny Typhlosion","mark":25200},{"nome":"Shiny Ursaring","mark":210000},{"nome":"Shiny Venomoth","mark":15399},{"nome":"Shiny Venonat","mark":2100},{"nome":"Shiny Venusaur","mark":25200},{"nome":"Shiny Victreebel","mark":16800},{"nome":"Shiny Vileplume","mark":16800},{"nome":"Shiny Voltorb","mark":350},{"nome":"Shiny Vulpix","mark":1400},{"nome":"Shiny Wartortle","mark":11200},{"nome":"Shiny Weavile","mark":105000},{"nome":"Shiny Weedle","mark":7},{"nome":"Shiny Weepinbell","mark":3150},{"nome":"Shiny Weezing","mark":14000},{"nome":"Shiny Wigglytuff","mark":25200},{"nome":"Shiny Wingull","mark":7000},{"nome":"Shiny Wooper","mark":2800},{"nome":"Shiny Xatu","mark":18200},{"nome":"Shiny Zubat","mark":168},{"nome":"Singer Wigglytuff","mark":12600},{"nome":"Skiploom","mark":1575},{"nome":"Slowbro","mark":7000},{"nome":"Slowking","mark":77000},{"nome":"Slowpoke","mark":280},{"nome":"Slugma","mark":700},{"nome":"Smoochum","mark":14000},{"nome":"Sneasel","mark":7000},{"nome":"Snorlax","mark":140000},{"nome":"Snorunt","mark":2450},{"nome":"Spearow","mark":70},{"nome":"Spheal","mark":4200},{"nome":"Spinarak","mark":175},{"nome":"Squirtle","mark":2100},{"nome":"Starmie","mark":7000},{"nome":"Staryu","mark":280},{"nome":"Steelix","mark":77000},{"nome":"Sunflora","mark":3500},{"nome":"Sunkern","mark":210},{"nome":"Swinub","mark":700},{"nome":"Taekwondo Hitmonlee","mark":45850},{"nome":"Tangela","mark":7000},{"nome":"Tauros","mark":7000},{"nome":"Teddiursa","mark":56000},{"nome":"Tentacool","mark":210},{"nome":"Tentacruel","mark":7000},{"nome":"Togekiss","mark":87500},{"nome":"Togepi","mark":10500},{"nome":"Togetic","mark":17500},{"nome":"Totodile","mark":2100},{"nome":"Tribal Feraligatr","mark":12600},{"nome":"Tribal Xatu","mark":9100},{"nome":"Typhlosion","mark":12600},{"nome":"Tyrogue","mark":14000},{"nome":"Ursaring","mark":105000},{"nome":"Venomoth","mark":7699},{"nome":"Venonat","mark":1050},{"nome":"Venusaur","mark":12600},{"nome":"Victreebel","mark":8400},{"nome":"Vileplume","mark":8400},{"nome":"Voltorb","mark":175},{"nome":"Vulpix","mark":700},{"nome":"Walrein","mark":46200},{"nome":"War Granbull","mark":8750},{"nome":"War Gyarados","mark":38500},{"nome":"War Heracross","mark":84000},{"nome":"Wardog Arcanine","mark":40950},{"nome":"Wartortle","mark":5600},{"nome":"Weavile","mark":210000},{"nome":"Weedle","mark":210},{"nome":"Weepinbell","mark":1575},{"nome":"Weezing","mark":7000},{"nome":"Wigglytuff","mark":12600},{"nome":"Wingull","mark":3500},{"nome":"Wooper","mark":1400},{"nome":"Xatu","mark":9100},{"nome":"Zubat","mark":84}];
+
+    function carregarDatalist() {
+      const datalist = document.getElementById('pokedex-list');
+      datalist.innerHTML = '';
+      databasePokedex.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.nome;
+        datalist.appendChild(option);
+      });
+    }
+
+    function selecionarPokemon() {
+      const inputNome = document.getElementById('buscar-pokemon').value;
+      const encontrado = databasePokedex.find(p => p.nome.toLowerCase() === inputNome.toLowerCase());
+      if (encontrado) {
+        document.getElementById('pokemon').value = encontrado.mark;
+        calcular();
+      }
+    }
+
+    function calcular() {
+      const pokemon = parseFloat(document.getElementById('pokemon').value);
+      const selectBola = document.getElementById('bola');
+      const precoBola = parseFloat(selectBola.value);
+      const capBola = parseFloat(selectBola.options[selectBola.selectedIndex].getAttribute('data-cap'));
+      const multiplicadorBuff = parseFloat(document.getElementById('buff').value);
+      const temPokelog = document.getElementById('pokelog').checked;
+      
+      const multiplicadorPokelog = temPokelog ? 1.05 : 1.0;
+
+      if (!pokemon || !precoBola || pokemon <= 0 || precoBola <= 0) {
+        document.getElementById('res-chance').innerText = "0,00%";
+        document.getElementById('res-meta').innerText = "$ 0";
+        document.getElementById('res-bolas').innerText = "0 un";
+        document.getElementById('res-custo').innerText = "$ 0";
+        return;
+      }
+
+      let chanceBruta = ((precoBola / pokemon) * 50) * multiplicadorBuff * multiplicadorPokelog;
+      if (chanceBruta > capBola) {
+        chanceBruta = capBola;
+      }
+
+      const meta = pokemon * 2;
+      const qtdBolas = Math.ceil(meta / precoBola);
+      const custo = qtdBolas * precoBola;
+
+      document.getElementById('res-chance').innerText = `${chanceBruta.toFixed(4).replace('.', ',')}%`;
+      document.getElementById('res-meta').innerText = `$ ${meta.toLocaleString('pt-BR')}`;
+      document.getElementById('res-bolas').innerText = `${qtdBolas.toLocaleString('pt-BR')} un`;
+      document.getElementById('res-custo').innerText = `$ ${custo.toLocaleString('pt-BR')}`;
+    }
+
+    window.onload = () => {
+      carregarDatalist();
+      calcular();
+    };
+  </script>
+
+</body>
+</html>
